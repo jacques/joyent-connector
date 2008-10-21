@@ -730,7 +730,15 @@ class MailController < AuthenticatedController
   def away_message_edit
     # load this drawer using javascript
     @user = User.find(current_user.id)
+    
+    # When away_expires_at is >= than today, we can safely nullify it and mark away of
+    if @user.away_on && (@user.away_expires_at < Time.now.to_date)
+      @user.away_on = false
+      @user.away_expires_at = nil
+    end
+    
     @user.away_message = _("I am away and have limited access to email. I will respond as soon as possible.") if @user.away_message.blank?
+    
     if request.xhr?
       render :partial => 'away'
     else

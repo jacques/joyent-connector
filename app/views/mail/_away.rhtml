@@ -44,10 +44,12 @@
 <% end %>
 
 <script type="text/javascript">
+		//<![CDATA[
 		// We need to setup the first valid date before to create the calendar object, since it's a class property
 		JSCalendar.firstValidDate = new Date();
 		// Adjust to the beginning of current date, or it may give us problems
 		JSCalendar.firstValidDate.setHours(0);
 		JSCalendar.firstValidDate.setMinutes(0);
 		JSCalendar.createCalendar('user_away_expires_at');
+		//]]>
 </script>
