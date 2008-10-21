@@ -410,12 +410,12 @@ class CalendarControllerTest < Test::Unit::TestCase
   
   # overlay users were not 'sticking'
   def test_regression_for_2647
-    get :list, {:calendar_id=>calendars(:concerts).id}
+    get :list, {:calendar_id => calendars(:concerts).id}
     assert_response :success
     assert_nil session[:calendar][:overlay_users]
     @request.env["HTTP_REFERER"] = "http://www.joyent.com"
     
-    get :add_overlay, {:user_id=>users(:peter).id}
+    post :set_overlay, {:user_ids => [users(:peter).id]}
     assert_response :redirect
     assert          session[:calendar][:overlay_users]
     assert_equal    users(:peter).id, session[:calendar][:overlay_users][0].to_i
