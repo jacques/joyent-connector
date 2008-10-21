@@ -19,7 +19,7 @@ class Date
 	@@test_month = 1
 	@@test_day   = 1
 
-	def today
+	def self.today
 		return Date.new(@@test_year, @@test_month, @@test_day)
   end
 
@@ -38,26 +38,70 @@ class MonthViewTest < Test::Unit::TestCase
 	def setup
 		User.current = users(:ian)
 	end	
+  
+  # Since these tests are overriding Date.today, there won't be a problem with
+  # the date at which these are being ran.
+	def test_create_month_view_current_month
+		month_date = Date.new(2008, 10, 1)
 
-	def test_create_month_view_actual_month
-		month_date = Date.new(2008, 03, 01)
+		Date.set_test_day(2008, 10, 1)
+		assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # No additional weeks needed
+		assert_equal 5, month.week_count
+    Date.set_test_day(2008, 10, 8)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # No additional weeks needed    
+    assert_equal 5, month.week_count		
+    Date.set_test_day(2008, 10, 15)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # One week needed
+    assert_equal 6, month.week_count   
+    Date.set_test_day(2008, 10, 22)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # Two weeks needed
+    assert_equal 7, month.week_count    
+    Date.set_test_day(2008, 10, 29)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # Three weeks needed    
+    assert_equal 8, month.week_count    
+	end
 
-		Date.set_test_day(2008, 03, 01)
-		assert MonthView.new(month_date, START_OF_WEEK, User.current)
-		Date.set_test_day(2008, 03, 15)
-		assert MonthView.new(month_date, START_OF_WEEK, User.current)
-		Date.set_test_day(2008, 03, 28)
-		assert MonthView.new(month_date, START_OF_WEEK, User.current)
+	def test_create_month_view_start_of_week
+		month_date = Date.new(2008, 10, 1)
+
+    Date.set_test_day(2008, 10, 5)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # No additional weeks needed    
+    assert_equal 5, month.week_count		
+    Date.set_test_day(2008, 10, 12)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # One week needed
+    assert_equal 6, month.week_count   
+    Date.set_test_day(2008, 10, 19)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # Two weeks needed
+    assert_equal 7, month.week_count    
+    Date.set_test_day(2008, 10, 26)
+    assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    # Three weeks needed    
+    assert_equal 8, month.week_count    
 	end
 
 	def test_create_month_view_different_month
-		month_date = Date.new(2008, 04, 01)
+		month_date = Date.new(2008, 10, 01)
 
+    # No additional weeks needed when not seeing current month
 		Date.set_test_day(2008, 03, 01)
-		assert MonthView.new(month_date, START_OF_WEEK, User.current)
+		assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    assert_equal 5, month.week_count
 		Date.set_test_day(2008, 03, 15)
-		assert MonthView.new(month_date, START_OF_WEEK, User.current)
-		Date.set_test_day(2008, 03, 28)
-		assert MonthView.new(month_date, START_OF_WEEK, User.current)
+		assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    assert_equal 5, month.week_count
+		Date.set_test_day(2008, 11, 01)
+		assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    assert_equal 5, month.week_count
+		Date.set_test_day(2008, 9, 30)
+		assert month = MonthView.new(month_date, START_OF_WEEK, User.current)
+    assert_equal 5, month.week_count    
 	end
 end

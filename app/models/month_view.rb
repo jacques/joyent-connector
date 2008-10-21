@@ -28,7 +28,7 @@ class MonthView < BaseView
       next_week = @weeks[-1].date + 7
     end
 
-    # See if today's date is in the actual month we're seeing
+    # See if today's date is in the current month we're seeing
     today = Date.today
     next_month =  date >> 1
     if ((today <=> date) == 1) and ((today <=> next_month) == -1)
@@ -77,13 +77,13 @@ class MonthView < BaseView
     today = Date.today
     week_row = -1
 
-    # Loop through the weeks array to find in wich position is the actual date located
+    # Loop through the weeks array to find in wich position is the current date located
     for i in 1..(@weeks.size-1)
       if ((today <=> @weeks[i].date) == -1) and ((today <=> @weeks[i-1].date) == 1)
         week_row = i
-      # This is the case where the actual date is start_of_week
+      # This is the case where the current date is start_of_week
       elsif ((today <=> @weeks[i].date) == 0)
-        week_row = i
+        week_row = i + 1
       # If date is in the last week of the month
       elsif (i == (@weeks.size-1)) and ((today <=> @weeks[i].date) == 1) 
         week_row = @weeks.size
