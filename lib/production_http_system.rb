@@ -97,7 +97,7 @@ class ProductionHttpSystem
               req.basic_auth(user, password)
             else 
               # Head request required for Digest Authentication
-              res = http.head(url.request_uri)
+              res = http.head(path)
               # Digest Auth:
               req.digest_auth(user, password, res)
             end
