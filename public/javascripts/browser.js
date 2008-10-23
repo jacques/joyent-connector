@@ -61,15 +61,17 @@ Object.extend(Browser.prototype, {
 	},
 	
 	addOnceClicked: function(elem) {
-		$(elem).getElementsByClassName('highlighted').each(function(element){
+		var array = $A($(elem).getElementsByClassName('highlighted'));
+		array.each(function(element){
 			if (!element.hasClassName('onceClicked')) { 
 				element.removeClassName('highlighted').addClassName('onceClicked'); 
-				}
+			}
  		});
 	},
 	
 	removeOnceClicked: function(elem) {
-		$(elem).getElementsByClassName('onceClicked').each(function(element){
+		var array = $A($(elem).getElementsByClassName('onceClicked'));
+		array.each(function(element){
 			element.removeClassName('onceClicked');
 		});
 	},
