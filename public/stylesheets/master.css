@@ -512,6 +512,20 @@ table.tableList tr td {
 	.actionImport a:active, .actionImport a.active {
 		background-position: -600px -90px;
 	}
+	
+	
+	.actionManage a.disabled, .actionManage a:hover.disabled {
+		background-position: -450px 0px;
+	}
+	.actionManage a {
+		background-position: -450px -30px;
+	}
+	.actionManage a:hover {
+		background-position: -450px -60px;
+	}
+	.actionManage a:active, .actionImport a.active {
+		background-position: -450px -90px;
+	}
 		
 	.actionShowAll a.disabled, .actionShowAll a:hover.disabled {
 		background-position: -750px 0px;

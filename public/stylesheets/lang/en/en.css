@@ -86,6 +86,10 @@ $Id$
 		width: 73px !important;
 		background-image: url(/images/lang/en/actionsGeneral.png);
 		}
+	.actionManage a {
+			width: 120px !important;
+			background-image: url(/images/lang/en/actionsPeople.png);
+		}
 	.actionShowAll a {
 		width: 77px !important;
 		background-image: url(/images/lang/en/actionsGeneral.png);

@@ -35,7 +35,7 @@
     <li class="actionAddToGroup"><%= link_to_function _('Add'), "return Drawers.toggleBrowser('Add');", {:id => 'actionAddLink'} %></li>
   <% end -%>
   <% if @toolbar[:manage] -%>
-    <li class="actionImport"><%= link_to_function _('Manage'), "return Drawers.toggle('Manage');", {:id => 'actionManageLink'} %></li>
+    <li class="actionManage"><%= link_to_function _('Manage'), "return Drawers.toggle('Manage');", {:id => 'actionManageLink'} %></li>
   <% end -%>
   <% if @toolbar[:remove] -%>
     <li class="actionRemoveFromGroup"><%= render :partial => 'toolbars/remove' %></li>
