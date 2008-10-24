@@ -574,11 +574,15 @@ class MailControllerTest < Test::Unit::TestCase
   end  
   
   def test_add_group_emails_ajax
+    # Successful finds
     login_person(:ian)
     xhr :get, :add_group_emails_ajax, :group_id => "pg#{person_groups(:friends).id}"
     assert_response :success
     xhr :get, :add_group_emails_ajax, :group_id => "s#{smart_groups(:ian_people_body_foo).id}"
-    assert_response :success        
+    assert_response :success
+    # Unsuccessful finds raise exceptions
+    assert_raise(ActiveRecord::RecordNotFound) {xhr :get, :add_group_emails_ajax, :group_id => "s9999999"}
+    assert_raise(ActiveRecord::RecordNotFound) {xhr :get, :add_group_emails_ajax, :group_id => "pg9999999"}    
   end
 
   # def test_inbox_unread_count
