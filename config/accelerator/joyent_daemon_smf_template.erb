@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
-<service_bundle type='manifest' name='ruby/joyent_calendar_subscriptions'>
+<service_bundle type='manifest' name='ruby/joyent_<%= daemon %>'>
   <service name='site/ruby/joyent_<%= daemon %>' type='service' version='0'>
     <create_default_instance enabled='true'/>
     <single_instance/>
@@ -15,11 +15,11 @@
       <!--<service_fmri value='svc:/network/nfs/client'/>-->
     </dependency> 
 
-    <exec_method name='start' type='method' exec='/opt/csw/bin/ruby script/joyent_<%= daemon %> start' timeout_seconds='60'>
+    <exec_method name='start' type='method' exec='/opt/local/bin/ruby script/joyent_<%= daemon %> start' timeout_seconds='60'>
       <method_context working_directory='<%= working_directory %>'>
         <method_credential user='<%= user %>' group='<%= group %>' />
         <method_environment>
-          <envvar name='PATH' value='/usr/bin:/bin:/opt/csw/bin' />
+          <envvar name='PATH' value='/usr/bin:/bin:/opt/local/bin' />
         </method_environment>
       </method_context>
     </exec_method>
