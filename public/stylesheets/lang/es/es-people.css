@@ -19,7 +19,51 @@ $Id$
 
 /* Toolbar (actions) ------------------------------------------- */
 
+
+	.actionJajah a.disabled, .actionJajah a:hover.disabled {
+		margin-top: 17px !important;
+		}
 	.actionJajah a {	
-		width: 113px !important;
+		width: 117px !important;
+		margin-top: 16px !important;
 		background-image: url(/images/lang/es/actionsPeople.png);
+		}	
+	.actionJajah a:hover {
+		margin-top: 15px !important;
+		}
+	
+	.actionAddToGroup a.disabled, .actionAddToGroup a:hover.disabled {
+		background-position: -155px 0px !important;
+		margin-top: 17px !important;
+		}
+	.actionAddToGroup a {	
+		width: 121px !important;
+		background-position: -155px -30px !important;
+		margin-top: 16px !important;
+		background-image: url(/images/lang/es/actionsPeople.png);
+		}
+	.actionAddToGroup a:hover {
+		background-position: -155px -60px !important;
+		margin-top: 15px !important;
+		}
+	.actionAddToGroup a:active, .actionAddToGroup a.active {
+		background-position: -155px -90px !important;
+		}
+	
+	.actionRemoveFromGroup a.disabled, .actionRemoveFromGroup a:hover.disabled {
+		background-position: -312px 0px !important;
+		margin-top: 17px !important;
+		}
+	.actionRemoveFromGroup a {	
+		width: 131px !important;
+		background-position: -312px -30px !important;
+		margin-top: 16px !important;
+		background-image: url(/images/lang/es/actionsPeople.png);
+		}
+	.actionRemoveFromGroup a:hover {
+		background-position: -312px -60px !important;
+		margin-top: 15px !important;
+		}
+	.actionRemoveFromGroup a:active, .actionRemoveFromGroup a.active {
+		background-position: -312px -90px !important;
 		}
