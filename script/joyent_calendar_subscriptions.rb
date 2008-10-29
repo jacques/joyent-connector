@@ -39,7 +39,7 @@ loop do
     w = 1.week.ago.gmtime
 
     cal_subs.each do |cal_sub|
-    
+      begin
         if (cal_sub.update_frequency == 'weekly' && cal_sub.updated_at < w) || (cal_sub.update_frequency == 'monthly' && cal_sub.updated_at < m)
           # localize_time in IcalendarConverter complains if this value is not set
           User.current = cal_sub.owner
@@ -47,13 +47,15 @@ loop do
           # updated_at value actualized
           cal_sub.save
         end
-
+      rescue Exception => e
+        logger.error "Exception syncrhonizing calendar subscription with ID=#{cal_sub.id}: #{e.inspect}"
+        next
+      end
     end
   
   rescue Exception => e
-    # raise "#{e.inspect}"
+    logger.error "Exception syncrhonizing calendar subscriptions: #{e.inspect}"
     exit
-    logger.error "Exception syncrhonizing calendar subscription with ID=#{cal_sub.id}: #{e.inspect}"
   end
   
   logger.info("#{Time.now.to_s}: ... Calendar Subsriptions syncrhonized")
