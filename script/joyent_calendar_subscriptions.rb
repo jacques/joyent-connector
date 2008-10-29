@@ -51,9 +51,9 @@ loop do
     end
   
   rescue Exception => e
-    raise "#{e.inspect}"
+    # raise "#{e.inspect}"
     exit
-    logger.error "Exception syncrhonizing calendar subscription with ID=#{cal_sub.id}: #{e}"
+    logger.error "Exception syncrhonizing calendar subscription with ID=#{cal_sub.id}: #{e.inspect}"
   end
   
   logger.info("#{Time.now.to_s}: ... Calendar Subsriptions syncrhonized")
