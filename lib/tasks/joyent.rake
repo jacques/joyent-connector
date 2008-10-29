@@ -47,7 +47,7 @@ namespace 'joyent' do
     sh %{ cat #{css_assets} > public/stylesheets/all.css }
     puts "\nGenerated all.css from common stylesheets\n\n"
 
-    js_assets = %w(prototype builder effects dragdrop controls joyent_prototype jsar lightbox application ui_elements sidebar browser toolbar group smart_group)
+    js_assets = %w(prototype builder effects dragdrop controls joyent_prototype jsar lightbox application ui_elements sidebar browser toolbar group smart_group subscription_group)
     js_assets = js_assets.collect{|x| "public/javascripts/#{x}.js"}.join(' ')
     sh %{ cat #{js_assets} > public/javascripts/all.js }
     puts "\nGenerated all.js from common javascripts\n\n"
