@@ -69,6 +69,40 @@ Capistrano::Configuration.instance(:must_exist).load do
       run "cd #{current_path}; rake joyent:cat_assets"
     end
     
+    desc "calendar subscription manifest"
+    task :calendar_smf, :roles => :app do
+      puts "set variables"
+      service_name = application
+      working_directory = current_path
+      daemon = 'calendar_subscriptions'
+      
+      template = File.read("config/accelerator/joyent_daemon_smf_template.erb")
+      buffer = ERB.new(template).result(binding)
+      
+      put buffer, "#{shared_path}/joyent_#{daemon}-smf.xml"
+      
+    end
+    
+    desc "import calendar subscription SMF"
+    task :import_calendar_smf, :roles => :app do
+      sudo "svccfg import #{shared_path}/joyent_calendar_subscriptions-smf.xml"
+    end
+    
+    desc "start calendar subscription daemon"
+    task :start_calendar_smf, :roles => :app do
+      sudo "svcadm enable -r /site/ruby/joyent_calendar_subscriptions"
+    end
+    
+    desc "stop calendar subscription daemon"
+    task :stop_calendar_smf, :roles => :app do
+      sudo "svcadm disable /site/ruby/joyent_calendar_subscriptions"
+    end
+    
+    desc "delete calendar subscription SMF"
+    task :delete_calendar_smf, :roles => :app do
+      sudo "svccfg delete /site/ruby/joyent_calendar_subscriptions"
+    end
+    
   end
   
   after 'deploy:setup', 'joyent:copy_configs_to_shared'
