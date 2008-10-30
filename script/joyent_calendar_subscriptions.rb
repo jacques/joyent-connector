@@ -60,6 +60,6 @@ loop do
   
   logger.info("#{Time.now.to_s}: ... Calendar Subsriptions syncrhonized")
   # wait for a minute and start again, (trying to avoid memory growing without limits)
-  sleep(60)
+  sleep(600)
   
 end
