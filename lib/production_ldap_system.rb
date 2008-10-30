@@ -184,7 +184,7 @@ class ProductionLdapSystem
   def user_to_ldap(u)
     hd = "#{u.organization.system_domain.email_domain}/#{u.username}/"
     hash = {
-      'objectclass'           => ['joyentUser', 'posixAccount', 'shadowAccount', 'ldapPublicKey'],
+      'objectclass'           => ['joyentUser', 'posixAccount', 'shadowAccount', 'ldapPublicKey', 'mailRecipient'],
       'uid'                   => [u.system_email],
       'dbid'                  => [u.id.to_s],
       'mail'                  => [u.system_email],
@@ -200,8 +200,9 @@ class ProductionLdapSystem
       'gidNumber'             => [u.organization.gid.to_s],
       'loginShell'            => ['/usr/local/bin/scponly'],
       'sshPublicKey'          => [u.send(:read_authorized_keys).first.to_s],
-      'mailAlternateAddress'  => u.mail_alternate_addresses, # aliases, multiple including primary email
-      'forward'               => [u.forward_address] # forward mail to address
+      'mailAlternateAddress'  => u.mail_alternate_addresses #, 
+      # aliases, multiple including primary email
+      #'forward'               => [u.forward_address] # forward mail to address
     } 
                      
     if !u.organization.active?
