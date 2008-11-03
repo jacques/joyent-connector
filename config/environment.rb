@@ -53,7 +53,8 @@ Rails::Initializer.run do |config|
   config.active_record.observers = :organization_observer, :user_observer,
                                    :calendar_observer, :folder_observer,
                                    :message_observer, :person_observer,
-                                   :ldap_organization_observer, :ldap_domain_observer, :ldap_person_observer
+                                   :ldap_organization_observer, :ldap_domain_observer, :ldap_person_observer,
+                                   :mail_alias_membership_observer
 
   # Make Active Record use UTC-base instead of local time
   config.active_record.default_timezone = :utc
