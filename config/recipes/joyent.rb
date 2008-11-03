@@ -111,10 +111,14 @@ Capistrano::Configuration.instance(:must_exist).load do
   after 'deploy:symlink', 'joyent:cat_assets'
   after 'deploy:start', 'joyent:start_joyent_job' # before 'deploy:start' ?
   after 'deploy:stop', 'joyent:stop_joyent_job'
+  before 'deploy', 'joyent:stop_joyent_job'
+  after 'deploy', 'joyent:start_joyent_job'
   # Calendar subscriptions daemon:
   after 'deploy:setup', 'joyent:calendar_smf'
   after 'deploy:cold', 'joyent:import_calendar_smf'
   after 'deploy:stop', 'joyent:stop_calendar_smf'
   after 'deploy:start', 'joyent:start_calendar_smf'
+  before 'deploy', 'joyent:stop_calendar_smf'
+  after 'deploy', 'joyent:start_calendar_smf'
 
 end
