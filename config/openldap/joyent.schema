@@ -150,6 +150,15 @@ attributetype ( 1.3.6.1.4.1.4203.666.999.220
 	EQUALITY caseExactMatch
 	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+# maildrop attribute for joyentMailAlias
+
+attributetype: ( 1.3.6.1.4.1.4203.666.999.223 
+	NAME 'maildrop'
+	DESC 'RFC822 Mailbox - mail alias'
+	EQUALITY caseIgnoreIA5Match
+	SUBSTR caseIgnoreIA5SubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{256} )
+
 
 ###############
 # objectclasses
@@ -176,3 +185,12 @@ objectclass ( 1.3.6.1.4.1.4203.666.999.102
 	DESC 'An organization in the Joyent system'
 	SUP ( organization )
 	MAY ( aliasDomain ) )
+
+# define joyentMailAlias class
+objectclass ( 1.3.6.1.4.1.4203.666.999.103
+	NAME 'joyentMailAlias'
+	DESC 'Mail aliasing/forwarding entry in the Joyent system'
+	SUP ( top )
+	MUST ( mail $ maildrop )
+	MAY ( description $ mailAlternateAddress ) )
+
