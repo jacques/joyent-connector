@@ -575,7 +575,7 @@ module ApplicationHelper
     options[:complete] = ''    unless options.has_key?(:complete) # can add other callbacks as needed
 
     dom_id = Digest::SHA1.hexdigest(check_url.to_s + uncheck_url.to_s)
-    icon = "<img id=\"#{dom_id}Loading\" src=\"/images/animation/loading16grey.gif\" style=\"display: none;\" />"
+    icon = "<img id=\"#{dom_id}Loading\" src=\"/images/animation/loading16Grey.gif\" style=\"display: none;\" />"
     js = "new Ajax.Request((this.checked ? '#{check_url}' : '#{uncheck_url}'), {
             asynchronous:true, evalScripts:true,
             onLoading: function(){ $('#{dom_id}').hide(); $('#{dom_id}Loading').show(); },
