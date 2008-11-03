@@ -179,7 +179,7 @@ class ProductionLdapSystem
       hash['phoneNumber']     << phone_number.phone_number
     end
     
-    return hash.reject{|k,v| v == [''] || v == [nil]}
+    return hash.reject{|k,v| ( v == [''] || v == [nil] ) && ( k != 'cn' && k != 'sn' )}
   end
   
   # User and Person are different in LDAP.   
