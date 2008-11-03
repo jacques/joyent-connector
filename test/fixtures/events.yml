@@ -9,6 +9,21 @@
 # $Id$
 # --
 
+# The following exception can be thrown while loading this file: TZInfo::AmbiguousTime
+# Indicate a specified time in a local timezone has more than one possible time in UTC. 
+# This happens when switching from daylight savings time to normal time where the clocks are rolled back. 
+# Thrown by period_for_local and local_to_utc when using an ambiguous time and not specifying any means 
+# to resolve the ambiguity.
+
+# TZInfo::Timezone#local_to_utc
+# ...In the second case (more than one equivalent UTC time), an AmbiguousTime exception will be raised 
+# unless the optional dst parameter or block handles the ambiguity.
+# If the ambiguity is due to a transition from daylight savings time to standard time, the dst parameter 
+# can be used to select whether the daylight savings time or local time is used. For example,
+# Timezone.get('America/New_York').local_to_utc(DateTime.new(2004,10,31,1,30,0))
+# would raise an AmbiguousTime exception.
+# Specifying dst=true would return 2004-10-31 5:30:00. Specifying dst=false would return 2004-10-31 6:30:00
+
 <% user_1_tz = TZInfo::Timezone.get('America/Detroit') %>
 <% user_2_tz = TZInfo::Timezone.get('America/Detroit') %>
 concert:
