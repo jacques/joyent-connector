@@ -19,7 +19,7 @@ class LdapOrganizationObserver < ActiveRecord::Observer
 
     # This is particulary important if the org is deactivated
     organization.users.each do |user|
-      Person.ldap_system.write_user(user)
+      Person.ldap_system.udpate_user(user)
     end
   end
   

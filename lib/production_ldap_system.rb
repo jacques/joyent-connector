@@ -52,6 +52,16 @@ class ProductionLdapSystem
     end
   end
   
+  def update_person(p)
+    return unless exportable_person?(p)
+    
+    if person_in_ldap?(p)
+      ldap_execute do |ldap|
+        ldap.modify(base_dn_for_person(p), person_to_ldap(p))
+      end    
+    end
+  end  
+  
   def remove_person(p)
     return unless exportable_person?(p)
     
@@ -66,6 +76,16 @@ class ProductionLdapSystem
     ldap_execute do |ldap|
       ldap.delete(base_dn_for_user(u)) if user_in_ldap?(u)
       ldap.add(base_dn_for_user(u), user_to_ldap(u))
+    end
+  end
+  
+  def update_user(u)
+    return unless exportable_user?(u)
+    
+    if user_in_ldap?(u)
+      ldap_execute do |ldap|
+        ldap.modify(base_dn_for_user(u), user_to_ldap(u))
+      end    
     end
   end
   

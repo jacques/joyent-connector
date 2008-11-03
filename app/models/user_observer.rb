@@ -46,7 +46,7 @@ class UserObserver < ActiveRecord::Observer
   end
 
   def after_save(user)
-    Person.ldap_system.write_user(user)
+    Person.ldap_system.update_user(user)
     Person.ldap_system.update_organization(user.organization)
   end
   
