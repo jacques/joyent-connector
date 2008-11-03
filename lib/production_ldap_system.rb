@@ -149,12 +149,16 @@ class ProductionLdapSystem
     hash = Hash.new {|h,k| h[k] = []}
     
     hash['objectclass'] << 'joyentContact'
+    hash['objectclass'] << 'person'
+    hash['objectclass'] << 'organizationalPerson'
+    hash['objectclass'] << 'inetOrgPerson'
     hash['dbid']        << p.id.to_s
     hash['domain']      << p.organization.system_domain.email_domain
     hash['namePrefix']  << p.name_prefix
+    hash['cn']          << p.first_name   # This is required for person LDAP object
     hash['givenName']   << p.first_name
     hash['middleName']  << p.middle_name
-    hash['sn']          << p.last_name
+    hash['sn']          << p.last_name    # This is required for person LDAP object
     hash['nameSuffix']  << p.name_suffix
     hash['nickname']    << p.nickname
     hash['companyName'] << p.company_name
