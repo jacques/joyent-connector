@@ -363,7 +363,7 @@ class ProductionLdapSystem
     {"description"=>["Contacts for #{o.name}"], "ou"=>["contacts"], "objectClass"=>["top", "organizationalUnit"]}
   end
   
-  def aliases_hash(a)
+  def aliases_hash(o)
     {"description" => ["Mail aliases for #{o.name}"], "ou" => ["aliases"], "objectClass" => ["top", "organizationalUnit"]}
   end
   
