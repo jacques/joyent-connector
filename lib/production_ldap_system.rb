@@ -97,6 +97,35 @@ class ProductionLdapSystem
     end
   end
   
+  def write_alias(a)
+    return unless exportable_alias?(a)
+    
+    ldap_execute do |ldap|
+      ldap.add(base_dn_for_alias(a), alias_to_ldap(a))
+    end
+  end
+  
+  def update_alias(a)
+    return unless exportable_alias?(a)
+    
+    if alias_in_ldap?(a)
+      ldap_execute do |ldap|
+        ldap.modify(base_dn_for_alias(a), alias_to_ldap(a))
+      end
+    else
+      write_alias(a)
+    end
+  end
+  
+  def remove_alias(a)
+    return unless exportable_alias?(a)
+    
+    ldap_execute do |ldap|
+      ldap.delete(base_dn_for_alias(a)) if alias_in_ldap?(a)
+    end
+  end
+  
+  # TODO: we need to update existing organizations with mail aliases
   def write_organization(o)
     return unless exportable_organization?(o)
     
@@ -104,6 +133,7 @@ class ProductionLdapSystem
       ldap.add(base_dn(o),    base_hash(o))
       ldap.add(user_dn(o),    users_hash(o))
       ldap.add(contact_dn(o), contacts_hash(o))
+      ldap.add(alias_dn(o), aliases_hash(o))
     end
     
     save_organization_group(o)
@@ -236,6 +266,15 @@ class ProductionLdapSystem
     hash
   end
   
+  # a: MailAliasMembership
+  def alias_to_ldap(a)
+    hash = {
+      'objectClass' => ['joyentMailAlias'],
+      'mail'        => ["#{a.mail_alias.name}@#{a.mail_alias.organization.system_domain}"],
+      'maildrop'    => [a.user.system_email]
+    }
+  end
+  
   def group_base_hash(o)
     hash = { 
       "objectClass"=> ["top", "posixgroup"], 
@@ -255,6 +294,11 @@ class ProductionLdapSystem
   def base_dn_for_user(u)
     "uid=#{u.system_email},#{user_dn(u.organization)}"
   end
+  
+  # a: MailAliasMembership
+  def base_dn_for_alias(a)
+    "dbid=#{a.id},#{alias_dn(a.mail_alias.organization)}"
+  end
 
   def user_dn(org)
     "ou=users,#{base_dn(org)}"
@@ -262,6 +306,13 @@ class ProductionLdapSystem
   
   def contact_dn(org)
     "ou=contacts,#{base_dn(org)}"
+  end
+  
+  # TODO: Since we're updating existing LDAP directories,
+  #       we should include some exception handling for the case
+  #       the alias_dn is missing.
+  def alias_dn(org)
+    "ou=aliases,#{base_dn(org)}"
   end
   
   def base_dn(org)
@@ -278,6 +329,11 @@ class ProductionLdapSystem
   
   def person_in_ldap?(p)
     find_in_ldap(contact_dn(p.organization), 'joyentContact', p.id)
+  end
+  
+  # a: MailAliasMembership
+  def alias_in_ldap?(a)
+    find_in_ldap(alias_dn(a.mail_alias.organization), 'joyentMailAlias', a.id)
   end
   
   def find_in_ldap(dn, oc, id)
@@ -305,7 +361,11 @@ class ProductionLdapSystem
   
   def contacts_hash(o)
     {"description"=>["Contacts for #{o.name}"], "ou"=>["contacts"], "objectClass"=>["top", "organizationalUnit"]}
-  end  
+  end
+  
+  def aliases_hash(a)
+    {"description" => ["Mail aliases for #{o.name}"], "ou" => ["aliases"], "objectClass" => ["top", "organizationalUnit"]}
+  end
   
   def exportable_person?(person)
     person && person.organization && person.organization.system_domain && person.organization.system_domain.email_domain
@@ -317,5 +377,10 @@ class ProductionLdapSystem
   
   def exportable_organization?(organization)
     organization && organization.system_domain && organization.system_domain.email_domain
+  end
+  
+  # a: MailAliasMembership
+  def exportable_alias?(a)
+    a && a.mail_alias && a.mail_alias.name && a.mail_alias.organization && a.mail_alias.organization.system_domain && a.user && a.user.system_email
   end
 end
