@@ -271,7 +271,8 @@ class ProductionLdapSystem
     hash = {
       'objectClass' => ['joyentMailAlias'],
       'mail'        => ["#{a.mail_alias.name}@#{a.mail_alias.organization.system_domain.email_domain}"],
-      'maildrop'    => [a.user.system_email]
+      'maildrop'    => [a.user.system_email],
+      'dbid'        => [a.id.to_s]
     }
   end
   
