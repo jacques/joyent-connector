@@ -270,7 +270,7 @@ class ProductionLdapSystem
   def alias_to_ldap(a)
     hash = {
       'objectClass' => ['joyentMailAlias'],
-      'mail'        => ["#{a.mail_alias.name}@#{a.mail_alias.organization.system_domain}"],
+      'mail'        => ["#{a.mail_alias.name}@#{a.mail_alias.organization.system_domain.email_domain}"],
       'maildrop'    => [a.user.system_email]
     }
   end
@@ -381,6 +381,6 @@ class ProductionLdapSystem
   
   # a: MailAliasMembership
   def exportable_alias?(a)
-    a && a.mail_alias && a.mail_alias.name && a.mail_alias.organization && a.mail_alias.organization.system_domain && a.user && a.user.system_email
+    a && a.mail_alias && a.mail_alias.name && a.mail_alias.organization && a.mail_alias.organization.system_domain && a.mail_alias.organization.system_domain.email_domain && a.user && a.user.system_email
   end
 end
