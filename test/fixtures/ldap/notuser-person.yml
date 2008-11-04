@@ -26,12 +26,17 @@ st:
 - Someabama
 objectclass: 
 - joyentContact
+- person
+- organizationalPerson
+- inetOrgPerson
 dbid: 
 - "5"
 domain: 
 - textdrive.joyent.com
 country: 
 - Some Land
+cn:
+- Tai
 sn: 
 - Lee
 postalCode: 

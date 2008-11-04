@@ -22,10 +22,15 @@ companyName:
 - some guy inc
 objectclass: 
 - joyentContact
+- person
+- organizationalPerson
+- inetOrgPerson
 dbid: 
 - "7"
 domain: 
 - textdrive.joyent.com
+cn:
+- Some
 sn:
 - Guy
 givenName:

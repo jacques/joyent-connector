@@ -26,6 +26,9 @@ st:
 - CA
 objectclass: 
 - joyentContact
+- person
+- organizationalPerson
+- inetOrgPerson
 dbid: 
 - "1"
 nickname: 
@@ -36,6 +39,8 @@ middleName:
 - Kevin
 country: 
 - United States
+cn:
+- Ian
 sn: 
 - Curtis
 phoneNumber: 

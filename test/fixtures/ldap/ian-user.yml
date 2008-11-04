@@ -25,6 +25,7 @@ objectclass:
 - posixAccount
 - shadowAccount
 - ldapPublicKey
+- mailRecipient
 mail: 
 - ian@joyent.joyent.com
 uid: 
@@ -35,12 +36,16 @@ maildir:
 - "joyent.joyent.com/ian/Maildir/"
 gid:
 - "1"
+givenName:
+- Ian
 homeDirectory:
 - "joyent.joyent.com/ian/"
 gidNumber:
 - "501"
 cn:
 - "Ian Kevin Curtis"
+sn:
+- Curtis
 unixHomeDir:
 - <%= "#{JoyentConfig.storage_root}1/users/ian/strongspace" %>
 sshPublicKey:
@@ -57,5 +62,3 @@ mailAlternateAddress:
 - "info@joyent.net"
 - "info@koz.dev.joyent.com"
 - "ian@joyent.joyent.com"
-forward:
-- ""

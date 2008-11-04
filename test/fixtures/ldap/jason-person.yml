@@ -22,10 +22,15 @@ companyName:
 - Textdrive
 objectclass: 
 - joyentContact
+- person
+- organizationalPerson
+- inetOrgPerson
 dbid: 
 - "4"
 domain: 
 - textdrive.joyent.com
+cn:
+- Jason
 sn: 
 - Hoffman
 phoneNumber: 
