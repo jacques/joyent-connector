@@ -48,12 +48,18 @@ class UserObserver < ActiveRecord::Observer
   def after_save(user)
     Person.ldap_system.update_user(user)
     Person.ldap_system.update_organization(user.organization)
+    user.mail_aliases.each do |mail_alias|
+      Person.ldap_system.update_alias(mail_alias)
+    end
   end
   
   def after_destroy(user)
     Calendar.find_all_by_user_id(user.id).each(&:destroy)
     Person.ldap_system.remove_user(user)
     Person.ldap_system.update_organization(user.organization)
+    user.mail_aliases.each do |mail_alias|
+      Person.ldap_system.update_alias(mail_alias)
+    end
     MockFS.file_utils.rm_rf user.root_path
     JoyentMaildir::Base.remove_user(user)
   end                                                
