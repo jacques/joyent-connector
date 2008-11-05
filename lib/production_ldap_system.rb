@@ -271,7 +271,7 @@ class ProductionLdapSystem
     hash = {
       'objectclass' => ['joyentMailAlias'],
       'mail'        => [a.system_email_address],
-      'maildrop'    => [a.users.collect(&:system_email)]
+      'maildrop'    => a.users.collect(&:system_email)
     }
   end
   
@@ -333,7 +333,12 @@ class ProductionLdapSystem
   
   # a: MailAlias
   def alias_in_ldap?(a)
-    find_in_ldap(alias_dn(a.organization), 'joyentMailAlias', a.system_email_address)
+    # We're not using dbid for aliases now so, searches need to be sightly different:
+    ldap_execute do |l|
+      !l.search2(dn, LDAP::LDAP_SCOPE_ONELEVEL, "(&(objectclass=joyentMailAlias)(mail=#{a.system_email_address}))").empty?
+    end
+  rescue
+    false
   end
   
   def find_in_ldap(dn, oc, id)
