@@ -104,7 +104,8 @@ class ProductionLdapSystem
       ldap.add(base_dn_for_alias(a), alias_to_ldap(a))
     end
   end
-  
+  # Note we mostly use this method instead of create because when
+  # we add new aliases is after adding mail_alias_memberships
   def update_alias(a)
     return unless exportable_alias?(a)
     
@@ -160,6 +161,7 @@ class ProductionLdapSystem
       ldap_execute do |ldap|
         ldap.delete(user_dn(o))
         ldap.delete(contact_dn(o))
+        ldap.delete(alias_dn(o))
         ldap.delete(base_dn(o))
       end
     rescue LDAP::Error
