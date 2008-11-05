@@ -266,13 +266,12 @@ class ProductionLdapSystem
     hash
   end
   
-  # a: MailAliasMembership
+  # a: MailAlias
   def alias_to_ldap(a)
     hash = {
-      'objectClass' => ['joyentMailAlias'],
-      'mail'        => ["#{a.mail_alias.name}@#{a.mail_alias.organization.system_domain.email_domain}"],
-      'maildrop'    => [a.user.system_email],
-      'dbid'        => [a.id.to_s]
+      'objectclass' => ['joyentMailAlias'],
+      'mail'        => [a.system_email_address],
+      'maildrop'    => [a.users.collect(&:system_email)]
     }
   end
   
@@ -296,9 +295,9 @@ class ProductionLdapSystem
     "uid=#{u.system_email},#{user_dn(u.organization)}"
   end
   
-  # a: MailAliasMembership
+  # a: MailAlias 
   def base_dn_for_alias(a)
-    "dbid=#{a.id},#{alias_dn(a.mail_alias.organization)}"
+    "mail=#{a.system_email_address},#{alias_dn(a.organization)}"
   end
 
   def user_dn(org)
@@ -332,9 +331,9 @@ class ProductionLdapSystem
     find_in_ldap(contact_dn(p.organization), 'joyentContact', p.id)
   end
   
-  # a: MailAliasMembership
+  # a: MailAlias
   def alias_in_ldap?(a)
-    find_in_ldap(alias_dn(a.mail_alias.organization), 'joyentMailAlias', a.id)
+    find_in_ldap(alias_dn(a.organization), 'joyentMailAlias', a.system_email_address)
   end
   
   def find_in_ldap(dn, oc, id)
@@ -380,8 +379,8 @@ class ProductionLdapSystem
     organization && organization.system_domain && organization.system_domain.email_domain
   end
   
-  # a: MailAliasMembership
+  # a: MailAlias
   def exportable_alias?(a)
-    a && a.mail_alias && a.mail_alias.name && a.mail_alias.organization && a.mail_alias.organization.system_domain && a.mail_alias.organization.system_domain.email_domain && a.user && a.user.system_email
+    a && a.name && a.organization && a.organization.system_domain && (a.mail_alias_memberships.size > 0) && a.organization.system_domain.email_domain
   end
 end
