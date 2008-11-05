@@ -335,7 +335,7 @@ class ProductionLdapSystem
   def alias_in_ldap?(a)
     # We're not using dbid for aliases now so, searches need to be sightly different:
     ldap_execute do |l|
-      !l.search2(dn, LDAP::LDAP_SCOPE_ONELEVEL, "(&(objectclass=joyentMailAlias)(mail=#{a.system_email_address}))").empty?
+      !l.search2(alias_dn(a.organization), LDAP::LDAP_SCOPE_ONELEVEL, "(&(objectclass=joyentMailAlias)(mail=#{a.system_email_address}))").empty?
     end
   rescue
     false
