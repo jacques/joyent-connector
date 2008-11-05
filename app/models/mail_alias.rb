@@ -14,7 +14,7 @@ $Id$
 class MailAlias < ActiveRecord::Base
   belongs_to :organization
   
-  has_many   :mail_alias_memberships, :dependent => :destroy
+  has_many   :mail_alias_memberships, :dependent => :destroy, :after_add => :update_in_ldap, :after_remove => :update_in_ldap
   has_many   :users, :through => :mail_alias_memberships
   
   validates_presence_of   :organization_id
@@ -48,5 +48,9 @@ class MailAlias < ActiveRecord::Base
   
     def validate
       errors.add(:name, "The name can not be the same as a username.") if User.current.organization.users.find_by_username(self.name)
+    end
+    
+    def update_in_ldap(mail_alias_membership)
+      Person.ldap_system.update_alias(self)
     end
 end
