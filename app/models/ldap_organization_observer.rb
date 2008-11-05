@@ -21,6 +21,10 @@ class LdapOrganizationObserver < ActiveRecord::Observer
     organization.users.each do |user|
       Person.ldap_system.udpate_user(user)
     end
+    
+    organization.mail_aliases.each do |mail_alias|
+      Person.ldap_system.update_alias(mail_alias)
+    end
   end
   
   def after_destroy(organization)
