@@ -23,6 +23,8 @@ class MailAlias < ActiveRecord::Base
   validates_length_of     :name, :maximum => 50
   validates_uniqueness_of :name, :scope => 'organization_id'
   
+  after_destroy :remove_in_ldap
+  
   def system_email_address
     self.name + '@' + self.organization.system_domain.email_domain  
   end
@@ -51,6 +53,11 @@ class MailAlias < ActiveRecord::Base
     end
     
     def update_in_ldap(mail_alias_membership)
-      Person.ldap_system.update_alias(self)
+      Person.ldap_system.update_alias(mail_alias_membership.mail_alias)
     end
+    
+    def remove_in_ldap(mail_alias)
+      Person.ldap_system.remove_alias(mail_alias)
+    end
+
 end
