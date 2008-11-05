@@ -20,6 +20,7 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     @system = ProductionLdapSystem.new(JoyentConfig.ldap_host, 'user', 'pass', 'dc=joyent,dc=com')
     @person = people(:ian)
     @user   = users(:ian)
+    @org    = organizations(:joyent)
     
     # LDAP Connection stubbing
     @ldap_connection = mock('ldap connection')
@@ -158,5 +159,74 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     @system.expects(:user_in_ldap?).with(@user).returns(true)
     @ldap_connection.expects(:delete).with(@system.base_dn_for_user(@user)).returns(true)    
     assert @system.remove_user(@user)    
-  end    
+  end
+  
+  def test_save_organization_group
+    # Successful save
+    @ldap_connection.expects(:modify).with(@system.group_base_dn(@org), @system.group_base_hash(@org)).returns(true)
+    assert @system.save_organization_group(@org)
+    
+    # Unsuccessful save, organization group doesn't exist and it gets created
+    @ldap_connection.expects(:modify).with(@system.group_base_dn(@org), @system.group_base_hash(@org)).raises(LDAP::Error)    
+    @ldap_connection.expects(:add).with(@system.group_base_dn(@org), @system.group_base_hash(@org)).returns(true)
+    assert @system.save_organization_group(@org)
+  end
+
+  def test_remove_organization_group
+    # Successful removal
+    @ldap_connection.expects(:delete).with(@system.group_base_dn(@org)).returns(true)
+    assert @system.remove_organization_group(@org)
+    
+    # Unsuccessful removal, organization group doesn't exist: do nothing
+    @ldap_connection.expects(:delete).with(@system.group_base_dn(@org)).raises(LDAP::Error)    
+    assert_nil @system.remove_organization_group(@org)
+  end  
+
+  def test_write_organization
+    # Define a sequence
+    add_calls = sequence('add_calls')
+    # Define a call sequence
+    @ldap_connection.expects(:add).with(@system.base_dn(@org), @system.base_hash(@org)).returns(true).in_sequence(add_calls)
+    @ldap_connection.expects(:add).with(@system.user_dn(@org), @system.users_hash(@org)).returns(true).in_sequence(add_calls)    
+    @ldap_connection.expects(:add).with(@system.contact_dn(@org), @system.contacts_hash(@org)).returns(true).in_sequence(add_calls)
+    
+    @system.expects(:save_organization_group).with(@org).returns(true)
+    
+    assert @system.write_organization(@org)
+  end  
+  
+  def test_update_organization
+    # Successful update
+    @ldap_connection.expects(:modify).with(@system.base_dn(@org), @system.base_hash(@org)).returns(true)
+    @system.expects(:save_organization_group).with(@org).returns(true)
+    assert @system.update_organization(@org)
+    
+    # Unsuccessful update, maybe org doesn't exist and it gets created
+    @ldap_connection.expects(:modify).with(@system.base_dn(@org), @system.base_hash(@org)).raises(LDAP::Error)    
+    @system.expects(:write_organization).with(@org).returns(true)
+    @system.expects(:save_organization_group).with(@org).returns(true)    
+    assert @system.update_organization(@org)
+  end
+
+  def test_remove_organization
+    # Successful removal
+
+    remove_calls = sequence('remove_calls')
+
+    @ldap_connection.expects(:delete).with(@system.user_dn(@org)).returns(true).in_sequence(remove_calls)    
+    @ldap_connection.expects(:delete).with(@system.contact_dn(@org)).returns(true).in_sequence(remove_calls)
+    @ldap_connection.expects(:delete).with(@system.base_dn(@org)).returns(true).in_sequence(remove_calls)    
+    
+    @system.expects(:remove_organization_group).with(@org).returns(true)
+    
+    assert @system.remove_organization(@org)
+    
+    # Unsuccessful update, org doesn't exist: do nothing
+    # It should fail on the first call
+    @ldap_connection.expects(:delete).with(@system.user_dn(@org)).raises(LDAP::Error)    
+    # And then, a call to remove_organization should raise an exception too, but let's just stub
+    # this method and test it in its own testcase
+    @system.expects(:remove_organization_group).with(@org).returns(true)
+    assert @system.remove_organization(@org)
+  end
 end
