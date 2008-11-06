@@ -15,10 +15,19 @@ class MailAliasMembershipObserver < ActiveRecord::Observer
   
   def after_create(membership)
     Person.ldap_system.write_user(membership.user)
+    update_in_ldap(membership)
   end
   
   def after_destroy(membership)
-    Person.ldap_system.remove_user(membership.user)
+    # Why should we destroy an user just when deleting a MailAliasMembership?
+    # Person.ldap_system.remove_user(membership.user)
+    update_in_ldap(membership)
   end
+  
+  protected
+  
+    def update_in_ldap(mam)
+      Person.ldap_system.update_alias(mam.mail_alias)
+    end
   
 end
