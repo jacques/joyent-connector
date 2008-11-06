@@ -99,9 +99,20 @@ class ProductionLdapSystem
   
   def write_alias(a)
     return unless exportable_alias?(a)
-    
-    ldap_execute do |ldap|
-      ldap.add(base_dn_for_alias(a), alias_to_ldap(a))
+    # Exception handling to prevent "LDAP::ResultError: No such object"
+    # Error when trying to add aliases to existing organizations where
+    # we still need to add the alias_dn
+    begin
+      ldap_execute do |ldap|
+        ldap.add(base_dn_for_alias(a), alias_to_ldap(a))
+      end
+    rescue LDAP::ResultError => e
+      if @ldap.err == 32
+        ldap_execute do |ldap|
+          ldap.add(alias_dn(a.organization), aliases_hash(a.organization))
+          ldap.add(base_dn_for_alias(a), alias_to_ldap(a))
+        end
+      end
     end
   end
   # Note we mostly use this method instead of create because when
