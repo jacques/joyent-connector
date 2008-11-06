@@ -134,7 +134,7 @@ class ProductionLdapSystem
       ldap.add(base_dn(o),    base_hash(o))
       ldap.add(user_dn(o),    users_hash(o))
       ldap.add(contact_dn(o), contacts_hash(o))
-      ldap.add(alias_dn(o), aliases_hash(o))
+      ldap.add(alias_dn(o),   aliases_hash(o))
     end
     
     save_organization_group(o)

@@ -21,6 +21,7 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     @person = people(:ian)
     @user   = users(:ian)
     @org    = organizations(:joyent)
+    @alias  = mail_aliases(:www)
     
     # LDAP Connection stubbing
     @ldap_connection = mock('ldap connection')
@@ -139,7 +140,7 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     assert @system.update_user(@user)    
   end
 
-  def test_remove_person
+  def test_remove_person_user
     # Person doesn't exist in LDAP
     @system.expects(:person_in_ldap?).with(@person).returns(false)
     @ldap_connection.expects(:delete).never
@@ -160,6 +161,37 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     @ldap_connection.expects(:delete).with(@system.base_dn_for_user(@user)).returns(true)    
     assert @system.remove_user(@user)    
   end
+
+  def test_write_alias    
+    @ldap_connection.expects(:add).with(@system.base_dn_for_alias(@alias), @system.alias_to_ldap(@alias)).returns(true)    
+    assert @system.write_alias(@alias)
+  end
+  
+  def test_update_alias
+    # Alias doesn't exist in LDAP
+    @system.expects(:alias_in_ldap?).with(@alias).returns(false)
+    @ldap_connection.expects(:modify).never
+    @system.expects(:write_alias).with(@alias).returns(true)
+    assert @system.update_alias(@alias)
+    
+    # Alias exists in LDAP
+    @system.expects(:alias_in_ldap?).with(@alias).returns(true)
+    @ldap_connection.expects(:modify).with(@system.base_dn_for_alias(@alias), @system.alias_to_ldap(@alias)).returns(true)
+    @system.expects(:write_alias).never
+    assert @system.update_alias(@alias)    
+  end
+
+  def test_remove_alias
+    # Alias doesn't exist in LDAP
+    @system.expects(:alias_in_ldap?).with(@alias).returns(false)
+    @ldap_connection.expects(:delete).never
+    assert_nil @system.remove_alias(@alias)    
+
+    # Alias exists in LDAP    
+    @system.expects(:alias_in_ldap?).with(@alias).returns(true)
+    @ldap_connection.expects(:delete).with(@system.base_dn_for_alias(@alias)).returns(true)
+    assert @system.remove_alias(@alias)    
+  end  
   
   def test_save_organization_group
     # Successful save
@@ -189,6 +221,7 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     @ldap_connection.expects(:add).with(@system.base_dn(@org), @system.base_hash(@org)).returns(true).in_sequence(add_calls)
     @ldap_connection.expects(:add).with(@system.user_dn(@org), @system.users_hash(@org)).returns(true).in_sequence(add_calls)    
     @ldap_connection.expects(:add).with(@system.contact_dn(@org), @system.contacts_hash(@org)).returns(true).in_sequence(add_calls)
+    @ldap_connection.expects(:add).with(@system.alias_dn(@org), @system.aliases_hash(@org)).returns(true).in_sequence(add_calls)
     
     @system.expects(:save_organization_group).with(@org).returns(true)
     
@@ -210,12 +243,12 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
 
   def test_remove_organization
     # Successful removal
-
     remove_calls = sequence('remove_calls')
 
     @ldap_connection.expects(:delete).with(@system.user_dn(@org)).returns(true).in_sequence(remove_calls)    
     @ldap_connection.expects(:delete).with(@system.contact_dn(@org)).returns(true).in_sequence(remove_calls)
-    @ldap_connection.expects(:delete).with(@system.base_dn(@org)).returns(true).in_sequence(remove_calls)    
+    @ldap_connection.expects(:delete).with(@system.alias_dn(@org)).returns(true).in_sequence(remove_calls)    
+    @ldap_connection.expects(:delete).with(@system.base_dn(@org)).returns(true).in_sequence(remove_calls)        
     
     @system.expects(:remove_organization_group).with(@org).returns(true)
     
