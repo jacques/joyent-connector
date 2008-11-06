@@ -123,7 +123,7 @@ class ProductionLdapSystem
     if alias_in_ldap?(a)
       # If we're updating an alias where we've removed all the mail_alias_memberships
       # what we must do is to delete it:
-      if a.mail_alias_memberships.size < 1
+      if a.mail_alias_memberships(true).size < 1
         remove_alias(a)
       else
         ldap_execute do |ldap|
