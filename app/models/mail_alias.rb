@@ -52,8 +52,8 @@ class MailAlias < ActiveRecord::Base
       errors.add(:name, "The name can not be the same as a username.") if User.current.organization.users.find_by_username(self.name)
     end
     
-    def remove_in_ldap(mail_alias)
-      Person.ldap_system.remove_alias(mail_alias)
+    def remove_in_ldap
+      Person.ldap_system.remove_alias(self)
     end
 
 end
