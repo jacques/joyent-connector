@@ -48,6 +48,10 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
   def test_user_to_ldap
     assert_matches_fixture 'ian-user', @system.user_to_ldap(users(:ian))
   end
+  
+  def test_alias_to_ldap
+    assert_matches_fixture 'www-alias', @system.alias_to_ldap(@alias)
+  end
 
   def test_base_dn_for_person
     assert_equal "dbid=1,ou=contacts,o=joyent.joyent.com,dc=joyent,dc=com", 
@@ -57,6 +61,11 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
   def test_base_dn_for_user
     assert_equal "uid=ian@joyent.joyent.com,ou=users,o=joyent.joyent.com,dc=joyent,dc=com",
                  @system.base_dn_for_user(users(:ian))
+  end
+  
+  def test_base_dn_for_alias
+    assert_equal "mail=www@joyent.joyent.com,ou=aliases,o=joyent.joyent.com,dc=joyent,dc=com",
+                 @system.base_dn_for_alias(@alias)
   end
   
   def test_person_to_ldap_without_addresses_or_phone
