@@ -22,7 +22,9 @@ class MailAlias < ActiveRecord::Base
   validates_format_of     :name, :with => /^[a-z]([_.]?[a-z0-9]+)*$/
   validates_length_of     :name, :maximum => 50
   validates_uniqueness_of :name, :scope => 'organization_id'
-    
+  
+  after_destroy :remove_in_ldap
+  
   def system_email_address
     self.name + '@' + self.organization.system_domain.email_domain  
   end
@@ -48,6 +50,10 @@ class MailAlias < ActiveRecord::Base
   
     def validate
       errors.add(:name, "The name can not be the same as a username.") if User.current.organization.users.find_by_username(self.name)
+    end
+    
+    def remove_in_ldap(mail_alias)
+      Person.ldap_system.remove_alias(mail_alias)
     end
 
 end
