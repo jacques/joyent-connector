@@ -118,17 +118,15 @@ class ProductionLdapSystem
   # Note we mostly use this method instead of create because when
   # we add new aliases is after adding mail_alias_memberships
   def update_alias(a)
-    return unless exportable_alias?(a)
+    # If we're updating an alias where we've removed all the mail_alias_memberships what we must do is to delete it.
+    # (Note that an alias without mail_alias_memberships will not be exportable so, we cannot use remove_alias)
+    unless exportable_alias?(a)              
+      ldap_execute { |ldap| ldap.delete(base_dn_for_alias(a)) if alias_in_ldap?(a) }
+    end
     
     if alias_in_ldap?(a)
-      # If we're updating an alias where we've removed all the mail_alias_memberships
-      # what we must do is to delete it:
-      if a.mail_alias_memberships(true).size < 1
-        remove_alias(a)
-      else
-        ldap_execute do |ldap|
-          ldap.modify(base_dn_for_alias(a), alias_to_ldap(a))
-        end
+      ldap_execute do |ldap|
+        ldap.modify(base_dn_for_alias(a), alias_to_ldap(a))
       end
     else
       write_alias(a)
