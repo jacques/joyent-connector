@@ -535,6 +535,48 @@ class EventTest < Test::Unit::TestCase
     assert_equal e.primary_calendar.owner, users(:ian)
     assert e.primary_calendar.is_a?(CalendarSubscription)
   end
+
+  # Current calendar behavior for Linda. All good
+  def test_dst_passes_when_event_created_before_transition
+    e = events(:concert)
+    e.start_time = "Wed Oct 22 16:00:00 UTC 2008"      
+    ian = users(:ian)
+    ian.person.time_zone = "America/New_York"
+    
+    User.current = ian
+    # This is what Linda sees in her Calendar
+    assert_equal "12:00 PM", e.start_time_in_user_tz.strftime('%I:%M %p')
+  end  
   
+  # Current calendar behavior for non DST's like Andres or Jacques. Wrong hour showing up
+  def test_non_dst_fails_when_event_created_before_transition
+    e = events(:concert)
+    e.start_time = "Wed Oct 22 16:00:00 UTC 2008"      
+    ian = users(:ian)
+    ian.person.time_zone = "America/Bogota"
+    
+    User.current = ian 
+    # I keep seeing 11 am in my calendar, although it should show at 12m.
+    # First bug: countries without DST, and events created by users in DST zones
+    assert_equal "12:00 PM", e.start_time_in_user_tz.strftime('%I:%M %p')              
+  end  
   
+  # This test shows second bug:
+  # Bogota keeps being UTC - 5 (No DST), but the event time is now one hour later
+  # The event start_time is still 16:00 UTC and it was originally created with a UTC - 7 time zone (Los Angeles).
+  # The next happens because the event's start time is updated every week (the event is recurrent) and the situation has changed after November 2nd
+  def test_notification_fails_when_event_updated_after_transition
+    e = events(:concert)
+    e.start_time = "Wed Nov 12 16:00:00 UTC 2008"    
+    e.next_fire = "Wed Nov 12 15:45:00 UTC 2008"
+    ian = users(:ian)
+    ian.person.time_zone = "America/Bogota"
+    
+    User.current = ian
+    # Notification system thinks the event is at 11am, after DST transition
+    # Alarminator uses dates based on next_fire attribute, which keeps being updated everytime (so start_time)
+    # What is wrong here? That the event was created by a user with a changing time zone and there's a problem
+    # handling relative times for other users (including DST's and non-DST's).
+    assert_equal "12:00 PM", e.alarm_time_in_user_tz.strftime('%I:%M %p')
+  end
 end
