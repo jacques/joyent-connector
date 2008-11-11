@@ -12,8 +12,8 @@ $Id$
 =end #(end)
 
 class TestLdapSystem
-  attr_accessor :nuked_people, :written_people, :nuked_users, :written_users, :nuked_organizations,
-                :written_organizations
+  attr_accessor :nuked_people, :written_people, :nuked_users, :written_users, 
+                :nuked_aliases, :written_aliases, :nuked_organizations, :written_organizations
   def initialize
     @written_people        = []
     @nuked_people          = []
@@ -30,6 +30,9 @@ class TestLdapSystem
     @written_people << p
   end
   
+  def update_person(p)
+  end
+  
   def remove_person(p)
     @nuked_people << p
   end
@@ -37,9 +40,23 @@ class TestLdapSystem
   def write_user(u)
     @written_users << u
   end
+
+  def update_user(u)
+  end  
   
   def remove_user(u)
     @nuked_users << u
+  end
+  
+  def write_alias(a)
+    @written_aliases << a
+  end
+  
+  def update_alias(a)
+  end
+  
+  def remove_alias(a)
+    @nuked_aliases << a
   end
   
   def write_organization(o)

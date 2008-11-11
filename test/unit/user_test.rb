@@ -106,6 +106,7 @@ class UserTest < Test::Unit::TestCase
     notification_count = users(:ian).notifications.count
     
     # Peter sends Ian a notification about Stephen
+    Notification.any_instance.stubs(:notify!).returns(true)
     notification = users(:ian).notify_of(people(:stephen), users(:peter))
     
     assert_equal notification_count + 1, users(:ian).notifications.count
@@ -119,6 +120,7 @@ class UserTest < Test::Unit::TestCase
   # This is how you can look up a notification for an item
   def test_find_notification_for
     # Peter sends Ian a notification about stephen
+    Notification.any_instance.stubs(:notify!).returns(true)    
     users(:ian).notify_of(people(:stephen), users(:peter))
 
     assert users(:ian).find_notification_for(people(:stephen))
@@ -583,8 +585,8 @@ class UserTest < Test::Unit::TestCase
   end
   
   def test_all_people
-    assert_empty users(:ian).all_people - users(:ian).organization.users.collect(&:people)
-    assert_empty users(:ian).all_people - users(:ian).contact_list.people
+    assert users(:ian).all_people.size > users(:ian).organization.users.collect(&:people).size
+    assert users(:ian).all_people.size > users(:ian).contact_list.people.size
   end
   
   def test_people_person_groups
