@@ -19,6 +19,8 @@ class TestLdapSystem
     @nuked_people          = []
     @written_users         = []
     @nuked_users           = []
+    @written_aliases       = []
+    @nuked_aliases         = []    
     @written_organizations = []
     @nuked_organizations   = []
   end

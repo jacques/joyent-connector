@@ -19,7 +19,7 @@ class LdapOrganizationObserver < ActiveRecord::Observer
 
     # This is particulary important if the org is deactivated
     organization.users.each do |user|
-      Person.ldap_system.udpate_user(user)
+      Person.ldap_system.update_user(user)
     end
     
     organization.mail_aliases.each do |mail_alias|

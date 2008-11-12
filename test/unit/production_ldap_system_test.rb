@@ -271,4 +271,81 @@ class ProductionLdapSystemTest < Test::Unit::TestCase
     @system.expects(:remove_organization_group).with(@org).returns(true)
     assert @system.remove_organization(@org)
   end
+  
+  def test_ldap_user_workflow
+    User.current = users(:ian)
+    
+    # User creation
+    params = {'person_id'       => 10,
+              'organization_id' => 1,
+              'username'        => 'fred',
+              'password'        => 'wilmabhawt',
+              'password_sha1'   => '??',
+              'admin'           => false,
+              'identity_id'     => 1}
+    fred = User.new(params)
+    Person.ldap_system.expects(:write_user).with(fred)
+    assert fred.save
+    
+    # User update
+    fred.password = 'new_pass'
+        
+    Person.ldap_system.expects(:update_user).with(fred)
+    Person.ldap_system.expects(:update_organization).with(fred.organization)
+    # Person.ldap_system.expects(:update_alias).with(help).once
+    assert fred.save  
+    
+    # User removal
+    Person.ldap_system.expects(:remove_user).with(fred)
+    Person.ldap_system.expects(:update_organization).with(fred.organization)
+    assert fred.destroy    
+  end
+  
+  def test_ldap_person_workflow
+    # Person creation
+    params = {'organization_id' => 1,
+              'user_id'         => 1,
+              'name_prefix'     => 'Mr.',
+              'first_name'      => 'Fred',
+              'middle_name'     => 'Quincy',
+              'last_name'       => 'Flintstone',
+              'name_suffix'     => 'Sr.',
+              'nickname'        => 'freddy',
+              'company_name'    => 'Bedrock Quarry',
+              'title'           => 'Miner',
+              'time_zone'       => 'America/Detroit',
+              'notes'           => 'Nice guy.'}
+    fred = Person.new(params)
+    fred.expects(:write_to_ldap!).returns(true)
+    assert fred.save
+    
+    # Person update
+    fred.last_name = 'Jones'
+    fred.expects(:write_to_ldap!).returns(true)
+    assert fred.save
+    
+    # Person removal
+    fred.expects(:remove_from_ldap!).returns(true)
+    assert fred.destroy
+  end
+  
+  def test_ldap_alias_workflow
+    User.current = users(:ian)
+    ian = users(:ian)
+        
+    # Alias creation
+    help = MailAlias.create(:organization_id => 1, :name => 'help')
+    Person.ldap_system.expects(:write_user).with(ian)
+    Person.ldap_system.expects(:update_alias).with(help)    
+    assert help.add_user(ian) 
+    
+    # Alias membership removal
+    Person.ldap_system.expects(:update_alias)
+    assert ian.mail_alias_memberships.first.destroy
+    
+    # Alias removal
+    Person.ldap_system.expects(:update_alias).once
+    Person.ldap_system.expects(:remove_alias).with(help)
+    assert help.destroy
+  end
 end

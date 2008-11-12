@@ -70,6 +70,8 @@ class OrganizationTest < Test::Unit::TestCase
   end
   
   def test_setup
+    User.current = users(:ian)    
+    Person.ldap_system.stubs(:update_organization).returns(true)
     o = Organization.setup("Koz Inc.", "koz.koz.com", "koz", "testpass", "corel", "Michael", "Koziarski", 'koz@foo.com', 6, (5 * 1024), true)
     o = Organization.find(o.id) # hax to prevent shenanigans
     assert_equal "Koz Inc.", o.name
@@ -95,12 +97,14 @@ class OrganizationTest < Test::Unit::TestCase
   end
 
   def test_destroy_cascades
+    User.current = users(:ian)    
     oid = organizations(:joyent).id
 
     [Domain, Notification, Person, Quota, Tag, User].each do |c|
       assert c.find_all_by_organization_id(oid).length > 0
     end           
-                                  
+    
+    Person.ldap_system.expects(:remove_organization).with(organizations(:joyent))                              
     organizations(:joyent).deactivate!
     organizations(:joyent).destroy
 
@@ -110,6 +114,7 @@ class OrganizationTest < Test::Unit::TestCase
   end
 
   def test_destroy_doesnt_go_overboard
+    User.current = users(:ian)
     oid = organizations(:joyent).id
     all = []
     org = []
