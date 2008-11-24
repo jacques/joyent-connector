@@ -51,17 +51,16 @@ Capistrano::Configuration.instance(:must_exist).load do
       # exporting variables this way will also work with sh
       run <<-CMD
         RAILS_ENV=#{rails_env}; export RAILS_ENV; 
-        nohup ruby #{current_path}/script/joyent_job start; 
+        sudo nohup ruby #{current_path}/script/joyent_job start; 
         sleep 5;
-        RAILS_ENV=#{rails_env}; export RAILS_ENV; 
-        nohup ruby #{current_path}/script/joyent_job start_worker 3; 
+        sudo nohup ruby #{current_path}/script/joyent_job start_worker 3; 
         sleep 5
       CMD
     end
 
     desc "Stop the Joyent work script"
     task :stop_joyent_job, :roles => :app do
-      run "ruby #{current_path}/script/joyent_job stop"    
+      sudo "ruby #{current_path}/script/joyent_job stop"    
     end
 
     desc "concatenate assets"
