@@ -20,6 +20,7 @@ Capistrano::Configuration.instance(:must_exist).load do
       put(File.read('config/database.yml'),               "#{shared_path}/database.yml",     :mode => 0644)
       put(File.read('config/facebook.yml'),               "#{shared_path}/facebook.yml",     :mode => 0644)
       put(File.read('config/environments/production.rb'), "#{shared_path}/production.rb",    :mode => 0644)
+      put(File.read('config/mongrel_cluster.yml'), "#{shared_path}/mongrel_cluster.yml",    :mode => 0644)
     end
     
     desc "Copy configuration files from shared to release_path"
@@ -34,6 +35,10 @@ Capistrano::Configuration.instance(:must_exist).load do
       # Copy in a stubbed out production
       run "rm -rf #{release_path}/config/environments/production.rb"
       run "cp #{shared_path}/production.rb #{release_path}/config/environments/production.rb"
+      
+      # Copy in the mongrel_cluster.yml file
+      run "rm -rf #{release_path}/config/mongrel_cluster.yml"
+      run "cp #{shared_path}/mongrel_cluster.yml #{release_path}/config/mongrel_cluster.yml"
       
       # Copy in the facebook.yml file
       run "rm -rf #{release_path}/config/facebook.yml"
