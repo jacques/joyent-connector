@@ -68,6 +68,11 @@ Capistrano::Configuration.instance(:must_exist).load do
       run "cd #{current_path}; rake joyent:cat_assets"
     end
     
+    desc "build gmime"
+    task :gmime, :roles => :web do 
+      run "cd #{current_path}; rake joyent:gmime"
+    end
+    
     desc "calendar subscription manifest"
     task :calendar_smf, :roles => :app do
       puts "set variables"
@@ -112,6 +117,7 @@ Capistrano::Configuration.instance(:must_exist).load do
   after 'deploy:stop', 'joyent:stop_joyent_job'
   before 'deploy', 'joyent:stop_joyent_job'
   after 'deploy', 'joyent:start_joyent_job'
+  after 'deploy', 'joyent:gmime'
   # Calendar subscriptions daemon:
   after 'deploy:setup', 'joyent:calendar_smf'
   after 'deploy:cold', 'joyent:import_calendar_smf'
