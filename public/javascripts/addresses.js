@@ -28,25 +28,29 @@ Object.extend(AddressManager.prototype, {
   addAddress: function(kind) {
   	this.kind = kind;
     address = $('message_' + kind + '_complete').value.strip();
-
     if (address != '') {
-		if (address.indexOf('<') == -1 && address.indexOf('>') == -1){
-			var groupName = address.substring(0, address.indexOf('(') - 1);
-			var groupId = this.getGroupId(groupName);
-			if (groupId != -1)
-				this.addGroupEmailsAjax(kind, groupId);
-		}else{
-			name = address.substring(0, address.indexOf('<') - 1);
-			email = address.substring(address.indexOf('<') + 1, address.indexOf('>'));		
-			this[kind + '_addresses'].push(email);
-		    $(kind + '_addresses').innerHTML += this.drawAddress(kind, name, email);	 			
-		}		
-	}
+			if(this.validateEmail(address)){
+				this[kind + '_addresses'].push(address);
+			  $(kind + '_addresses').innerHTML += this.drawAddress(kind, address, address);			
+			}
+			else if (address.indexOf('<') == -1 && address.indexOf('>') == -1){
+				var groupName = address.substring(0, address.indexOf('(') - 1);
+				var groupId = this.getGroupId(groupName);
+				if (groupId != -1){
+					this.addGroupEmailsAjax(kind, groupId);
+				}
+			}else{
+				name = address.substring(0, address.indexOf('<') - 1);
+				email = address.substring(address.indexOf('<') + 1, address.indexOf('>'));		
+				this[kind + '_addresses'].push(email);
+			  $(kind + '_addresses').innerHTML += this.drawAddress(kind, name, email);	 			
+			}
+		}
 
     $('message_' + kind + '_complete').value = '';
     $('message_' + kind + '_complete').activate();
 
-	return false;
+		return false;
   },
 	
   removeAddress: function(kind, id) {
@@ -111,5 +115,16 @@ Object.extend(AddressManager.prototype, {
     } else {
       return true;
     }
-  }
+  },
+
+	validateEmail: function(address){
+		var valid;		
+		var filter = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+		if (filter.test(address)){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 });
