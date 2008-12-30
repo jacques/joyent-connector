@@ -80,12 +80,18 @@ class JoyentFileType
     ['css',  :text, 'css', 'Cascading Style Sheet', 'text/css'],
 
     # code
-    ['rb',  :text, 'code', 'Source Code', 'text/plain'],
-    ['js',  :text, 'code', 'JavaScript',  'text/javascript'],
-    ['c',   :text, 'code', 'Source Code', 'text/plain'],
-    ['py',  :text, 'code', 'Source Code', 'text/plain'],
-    ['tex', :text, 'code', 'TeX',         'application/x-tex'],
-    ['xsl', :text, 'code', 'Source Code', 'text/plain'],
+    ['rb',    :text, 'code', 'Source Code', 'text/plain'],
+    ['js',    :text, 'code', 'JavaScript',  'text/javascript'],
+    ['c',     :text, 'code', 'Source Code', 'text/plain'],
+    ['h',     :text, 'code', 'Source Code', 'text/plain'],
+    ['py',    :text, 'code', 'Source Code', 'text/plain'],
+    ['tex',   :text, 'code', 'TeX',         'application/x-tex'],
+    ['xsl',   :text, 'code', 'Source Code', 'text/plain'],
+    ['php',   :text, 'code', 'Source Code', 'text/plain'],
+    ['php4',  :text, 'code', 'Source Code', 'text/plain'],
+    ['php5',  :text, 'code', 'Source Code', 'text/plain'],
+    ['phtml', :text, 'code', 'Source Code', 'text/plain'],
+    ['tpl',   :text, 'code', 'Source Code', 'text/plain'],
 
     # misc
     ['iso',  nil,      'txt', 'Disk Image',   'application/octet-stream'],
